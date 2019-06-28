@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Bootstrap CSS -->
+    <title>Create New File</title>
+</head>
+<body>
+    <h2>Manipulate files</h2>
+    </br>
+    <input type="radio" name="type" id="choice" value="file">
+    <input type="radio" name="type" id="choice" value="dir">
+    </br>
+    filename: <input type="text" id="filename" name="filename">
+    </br>
+    Content: <textarea row="4" cols="50" id="userinput"></textarea>
+    </br>
+    <input type="button" id='btn-createFile' value="Create new"></input>
+</body>
+
+<script>
+    const electron = require('electron');
+    const fs = require('fs');
+    const path = require('path');
+    const {ipcRenderer} = electron;
+    const {dialog} = electron.remote;
+
+
+    document.getElementById('btn-createFile').addEventListener('click', () => {
+        let content = document.querySelector('#userinput').value;
+        
+        let filename = document.getElementById('filename').value;
+        if(filename === undefined || filename == '') {
+            alert('Please give this file a name');
+            return;
+        }
+        //set your dir:
+        let filepath = path.join(__dirname, `file/${filename}`);
+        
+        fs.writeFile(filepath, content, (err) => {
+            if(err) {
+                alert(err);
+                return;
+            }
+
+            alert('File saved successfully');
+            electron.remote.getCurrentWindow().close();
+        })
+        // dialog.showSaveDialog(filename => {
+        //     if(filename === undefined) {
+        //         alert('cannot save a file with an empty name');
+        //         return;
+        //     }
+
+        //     fs.writeFile(filename, content, (err) => {
+        //         if(err) {
+        //             console.log('save file err');
+        //             return;
+        //         }
+        //         alert('File saved successfully');
+        //     });
+        // })
+    }, false)
+
+    //function to create a directory
+    function createDir(dir) {
+        fs.mkdir(path, function(err) {
+        if (err) {
+            if (err.code == 'EEXIST') ; // ignore the error if the folder already exists
+            else {
+                alert("Something wrong when creating the directory");
+            }; // something else went wrong
+        }
+    });
+    }
+</script>
+</html>

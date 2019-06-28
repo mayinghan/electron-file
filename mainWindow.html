@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List</title>
+</head>
+<body>
+    <h1>File System Demo</h1>
+    <ul>
+    </ul>
+    <script>
+        const electron = require('electron');
+        const {ipcRenderer} = electron;
+        const ul = document.querySelector('ul');
+        ipcRenderer.on('item:add', function(e, item) {
+            const li = document.createElement('li');
+            const itemText = document.createTextNode(item);
+            li.appendChild(itemText);
+            ul.appendChild(li);
+        });
+
+        //clear
+        ipcRenderer.on('item:clear', function() {
+            ul.innerHTML = '';
+        });
+
+        //remove item
+        ul.addEventListener('dblclick', function(e) {
+            e.target.remove();
+        });
+    </script>
+</body>
+</html>

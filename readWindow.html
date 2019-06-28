@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Read a new file</title>
+</head>
+
+<body>
+    <h2>read & modify files</h2>
+    <input type="button" id="readFile" value="Select file" />
+    <textarea row="4" cols="50" id="userinput"></textarea>
+    <!-- <input type="button" id="updateFile" value="Update file" /> -->
+    </br>
+    File path:
+    <textarea row="1" cols="50" id="filename"></textarea>
+    <input type="button" id="updateFile" value="Update file" />
+</body>
+
+<script>
+    const fs = require('fs');
+    const electron = require('electron');
+    const path = require('path')
+    const { dialog } = electron.remote;
+    // const remote = electron.remote;
+
+    document.getElementById('readFile').addEventListener("click", () => {
+        //popup windoow
+        // dialog.showOpenDialog({properties: ['openFile']}, (filename) => {
+        //     if(filename === undefined) {
+        //         alert("Please select a file");
+        //         return;
+        //     }
+
+        //     fs.readFile(filename[0], 'UTF-8', (err, data) => {
+        //         if(err) {
+        //             alert("an error occured");
+        //             return;
+        //         }
+        //         document.getElementById('filename').value = filename[0];
+        //         document.getElementById('userinput').value = data;
+        //     })
+        // });
+
+        let filename = path.join(__dirname, '123123.txt');
+        fs.readFile(filename, 'UTF-8', (err, data) => {
+            if (err) {
+                alert("an error occured");
+                return;
+            }
+            document.getElementById('filename').value = filename;
+            document.getElementById('userinput').value = data;
+        })
+    });
+
+    document.getElementById('updateFile').addEventListener('click', () => {
+        let filename = document.getElementById('filename').value;
+        let content = document.getElementById('userinput').value;
+
+        fs.writeFile(filename, content, (err) => {
+            if (err) {
+                alert('save file err');
+                let window = electron.remote.getCurrentWindow();
+                window.close();
+            }
+            alert('File saved successfully');
+            let window = electron.remote.getCurrentWindow();
+            window.close();
+        })
+    });
+
+    //function to read a dir
+    function fileDisplay(filePath) {
+        fs.readdir(filePath, function (err, files) {
+            if (err) {
+                alert(err)
+            } else {
+                files.forEach(function (filename) {
+                    var filedir = path.join(filePath, filename);
+                    fs.stat(filedir, function (eror, stats) {
+                        if (eror) {
+                            alert.warn('fail to get the stats of the file');
+                        } else {
+                            var isFile = stats.isFile();
+                            var isDir = stats.isDirectory();
+                            if (isFile) {
+                                console.log(filedir);
+                            }
+                            if (isDir) {
+                                fileDisplay(filedir); //recursion
+                            }
+                        }
+                    })
+                });
+            }
+        });
+    }
+
+    // document.getElementById('updateFile').addEventListener('click', () => {
+    //     dialog.showSaveDialog(filename => {
+    //         if(filename === undefined) {
+    //             alert('cannot save a file with an empty name');
+    //             return;
+    //         }
+
+
+    //         let content = document.getElementById('userinput').value;
+    //         fs.writeFile(filename, content, (err) => {
+    //             if(err) {
+    //                 console.log('save file err');
+    //                 return;
+    //             }
+    //             alert('File saved successfully');
+    //             let window = electron.remote.getCurrentWindow();
+    //             window.close();
+    //         })
+    //     })
+    // });
+</script>
+
+</html>

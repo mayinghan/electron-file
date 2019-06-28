@@ -1,0 +1,14 @@
+{
+  "name": "electron-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Yinghan Ma",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^5.0.2"
+  }
+}
